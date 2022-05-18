@@ -14,4 +14,5 @@ Tech Used :
 * Clean architecture
 * Dagger
 * MVVM
+* LiveData
 
