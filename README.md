@@ -12,4 +12,6 @@ Tech Used :
 * Completely offline
 * Unit test
 * Clean architecture
+* Dagger
+* MVVM
 
