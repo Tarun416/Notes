@@ -1,0 +1,104 @@
+package com.task.noteapp
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.task.noteapp.model.Notes
+import com.task.noteapp.repo.NotesRepo
+import com.task.noteapp.utils.NotesState
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.*
+import javax.inject.Inject
+
+class NotesViewModel
+@Inject constructor(private val repo: NotesRepo) : ViewModel() {
+
+    private val noteLiveData = MutableLiveData<NotesState>()
+    private var compositeDisposable = CompositeDisposable()
+
+    val livedata: LiveData<NotesState>
+        get() = noteLiveData
+
+
+    fun insert(taskName: String, taskDesc: String) {
+        noteLiveData.value = NotesState.ShowLoading
+        val note = Notes(title = taskName, description = taskDesc, createdAt = Date())
+
+        Single.fromCallable { repo.insertNotes(note) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer<Any?> { })
+    }
+
+
+    fun update(id: Int, taskName: String, taskDesc: String, createdAt: Date?) {
+        noteLiveData.value = NotesState.ShowLoading
+        val note = Notes(
+            id,
+            title = taskName,
+            description = taskDesc,
+            edited = true,
+            createdAt = createdAt
+        )
+
+        Single.fromCallable { repo.updateNotes(note) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer<Any?> { })
+    }
+
+    fun deleteById(id: Int) {
+        noteLiveData.value = NotesState.ShowLoading
+        Single.fromCallable { repo.deleteNotes(id) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer<Any?> { })
+
+
+    }
+
+
+    fun getAllNotes() {
+        noteLiveData.value = NotesState.ShowLoading
+
+        repo.getNotes()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : io.reactivex.rxjava3.core.Observer<List<Notes>> {
+
+                override fun onSubscribe(d: Disposable?) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onNext(t: List<Notes>?) {
+                    noteLiveData.value = NotesState.HideLoading
+                    if (t!!.isEmpty())
+                        noteLiveData.postValue(NotesState.Empty)
+                    else
+                        noteLiveData.postValue(NotesState.Success(t))
+                }
+
+                override fun onError(e: Throwable?) {
+                    noteLiveData.value = NotesState.HideLoading
+                    noteLiveData.postValue(NotesState.Error(e!!))
+                }
+
+                override fun onComplete() {
+
+                }
+
+            })
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
+
+
+}
