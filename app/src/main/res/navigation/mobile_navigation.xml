@@ -24,7 +24,7 @@
 
         <argument
             android:name="notes"
-            app:argType="com.task.noteapp.model.Notes"
+            app:argType="com.task.noteapp.ui.model.NotesUI"
             app:nullable="true" />
         <action
             android:id="@+id/action_task_edit_fragment_to_nav_home"

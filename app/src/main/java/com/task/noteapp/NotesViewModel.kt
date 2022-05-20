@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.task.noteapp.model.Notes
 import com.task.noteapp.repo.NotesRepo
+import com.task.noteapp.ui.model.NotesUI
 import com.task.noteapp.utils.NotesState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -20,6 +22,7 @@ class NotesViewModel
 
     private val noteLiveData = MutableLiveData<NotesState>()
     private var compositeDisposable = CompositeDisposable()
+    private val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm aa")
 
     val livedata: LiveData<NotesState>
         get() = noteLiveData
@@ -36,14 +39,14 @@ class NotesViewModel
     }
 
 
-    fun update(id: Int, taskName: String, taskDesc: String, createdAt: Date?) {
+    fun update(id: Int, taskName: String, taskDesc: String, createdAt: String?) {
         noteLiveData.value = NotesState.ShowLoading
         val note = Notes(
             id,
             title = taskName,
             description = taskDesc,
             edited = true,
-            createdAt = createdAt
+            createdAt = sdf.parse(createdAt)
         )
 
         Single.fromCallable { repo.updateNotes(note) }
@@ -76,11 +79,19 @@ class NotesViewModel
                 }
 
                 override fun onNext(t: List<Notes>?) {
+
                     noteLiveData.value = NotesState.HideLoading
-                    if (t!!.isEmpty())
+
+                    val noteList = mutableListOf<NotesUI>()
+                    for(note in t!!)
+                    {
+                        noteList.add(NotesUI(note.id,note.title,note.description,note.edited,sdf.format(note.createdAt)))
+                    }
+
+                    if (noteList!!.isEmpty())
                         noteLiveData.postValue(NotesState.Empty)
                     else
-                        noteLiveData.postValue(NotesState.Success(t))
+                        noteLiveData.postValue(NotesState.Success(noteList))
                 }
 
                 override fun onError(e: Throwable?) {

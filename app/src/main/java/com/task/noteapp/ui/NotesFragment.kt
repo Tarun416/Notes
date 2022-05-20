@@ -16,7 +16,9 @@ import com.task.noteapp.R
 import com.task.noteapp.adapter.NotesAdapter
 import com.task.noteapp.databinding.NoteFragmentBinding
 import com.task.noteapp.model.Notes
+import com.task.noteapp.ui.model.NotesUI
 import com.task.noteapp.utils.NotesState
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 class NotesFragment : Fragment(), View.OnClickListener {
@@ -61,7 +63,7 @@ class NotesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun observeState() {
-        viewModel.livedata.observe(requireActivity(), {
+        viewModel.livedata.observe(requireActivity()) {
             when (it) {
                 NotesState.Empty -> {
                     loadEmptyState()
@@ -80,14 +82,14 @@ class NotesFragment : Fragment(), View.OnClickListener {
                     loadSuccessState(it.list)
                 }
             }
-        })
+        }
     }
 
     private fun showErrorMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun loadSuccessState(list: List<Notes>) {
+    private fun loadSuccessState(list: List<NotesUI>) {
         noteAdapter.differ.submitList(list)
     }
 
@@ -111,7 +113,7 @@ class NotesFragment : Fragment(), View.OnClickListener {
 
             findNavController().navigate(
                 NotesFragmentDirections.actionNavHomeToTaskEditFragment(
-                    Notes(it.id, it.title, it.description, createdAt = it.createdAt)
+                    NotesUI(it.id,title =  it.title, description = it.description, createdAt = it.createdAt)
                 )
             )
         }

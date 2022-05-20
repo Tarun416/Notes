@@ -9,19 +9,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.task.noteapp.databinding.ItemNotesBinding
 import com.task.noteapp.model.Notes
+import com.task.noteapp.ui.model.NotesUI
 import java.text.SimpleDateFormat
 
 class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NotesVH>() {
 
     private val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm aa")
 
-    private val differCallback = object : DiffUtil.ItemCallback<Notes>() {
-        override fun areItemsTheSame(oldItem: Notes, newItem: Notes): Boolean {
-            return oldItem.id == newItem.id
+    private val differCallback = object : DiffUtil.ItemCallback<NotesUI>() {
+        override fun areItemsTheSame(oldItem: NotesUI, newItem: NotesUI): Boolean {
+            return oldItem.createdAt == newItem.createdAt
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: Notes, newItem: Notes): Boolean {
+        override fun areContentsTheSame(oldItem: NotesUI, newItem: NotesUI): Boolean {
             return oldItem == newItem
         }
     }
@@ -51,7 +52,7 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NotesVH>() {
             else
                editedTag.visibility = View.GONE
 
-            createdAt.text = sdf.format(item.createdAt)
+            createdAt.text = item.createdAt
 
             // on item click
             holder.itemView.setOnClickListener {
@@ -63,8 +64,8 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NotesVH>() {
     inner class NotesVH(val binding: ItemNotesBinding) : RecyclerView.ViewHolder(binding.root)
 
     // on item click listener
-    private var onItemClickListener: ((Notes) -> Unit)? = null
-    fun setOnItemClickListener(listener: (Notes) -> Unit) {
+    private var onItemClickListener: ((NotesUI) -> Unit)? = null
+    fun setOnItemClickListener(listener: (NotesUI) -> Unit) {
         onItemClickListener = listener
     }
 }
