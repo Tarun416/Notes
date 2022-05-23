@@ -31,7 +31,6 @@ class NotesCreateEditFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         viewModel =
             ViewModelProvider(requireActivity(), viewModelFactory).get(NotesViewModel::class.java)
-
     }
 
     override fun onAttach(context: Context) {
@@ -60,7 +59,6 @@ class NotesCreateEditFragment : Fragment(), View.OnClickListener {
             getString(R.string.add_note).also { binding.toolbar.title = it }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickLisntener()
@@ -81,7 +79,6 @@ class NotesCreateEditFragment : Fragment(), View.OnClickListener {
             it.noteET.text.toString()
         )
     }
-
 
     private fun setClickLisntener() {
         binding.saveNotes.setOnClickListener(this)

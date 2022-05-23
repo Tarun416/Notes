@@ -12,20 +12,17 @@ import javax.inject.Singleton
 @Module
 class AppModule(private val application: Application) {
 
+    @Provides
+    @Singleton
+    fun provideNoteRepo(dao: NotesDao) = NotesRepo(dao)
 
     @Provides
     @Singleton
-    fun provideNoteRepo(dao : NotesDao) = NotesRepo(dao)
+    fun provideNotesDao(db: NotesDatabase): NotesDao = db.getNotesDao()
 
     @Provides
     @Singleton
-    fun provideNotesDao(db  : NotesDatabase) : NotesDao= db.getNotesDao()
-
-    @Provides
-    @Singleton
-    fun provideNoteDatabase() : NotesDatabase = Room.databaseBuilder(application,NotesDatabase::class.java,"notes.db")
-        .fallbackToDestructiveMigration().build()
-
-
-
- }
+    fun provideNoteDatabase(): NotesDatabase =
+        Room.databaseBuilder(application, NotesDatabase::class.java, "notes.db")
+            .fallbackToDestructiveMigration().build()
+}

@@ -8,13 +8,9 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.task.noteapp.databinding.ItemNotesBinding
-import com.task.noteapp.model.Notes
 import com.task.noteapp.ui.model.NotesUI
-import java.text.SimpleDateFormat
 
 class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NotesVH>() {
-
-    private val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm aa")
 
     private val differCallback = object : DiffUtil.ItemCallback<NotesUI>() {
         override fun areItemsTheSame(oldItem: NotesUI, newItem: NotesUI): Boolean {
@@ -47,10 +43,10 @@ class NotesAdapter : RecyclerView.Adapter<NotesAdapter.NotesVH>() {
             itemNotesTitle.text = item.title
             itemNotesDesc.text = item.description
 
-           if(item.edited!!)
-               editedTag.visibility = View.VISIBLE
+            if (item.edited!!)
+                editedTag.visibility = View.VISIBLE
             else
-               editedTag.visibility = View.GONE
+                editedTag.visibility = View.GONE
 
             createdAt.text = item.createdAt
 

@@ -18,8 +18,8 @@ class Notes(
     @ColumnInfo(name = "description")
     var description: String,
     @ColumnInfo(name = "edited")
-    var edited: Boolean?=false,
+    var edited: Boolean? = false,
     @ColumnInfo(name = "createdAt")
-    var createdAt: Date?=null
+    var createdAt: Date? = null
 
 ) : Serializable

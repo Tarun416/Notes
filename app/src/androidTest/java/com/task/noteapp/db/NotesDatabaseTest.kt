@@ -5,17 +5,12 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import junit.framework.TestCase
-import org.junit.*
+import org.junit.Before
+import org.junit.After
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
-abstract class NotesDatabaseTest : TestCase()
-{
-
-   // @JvmField @Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
-   // @JvmField @Rule val mainActivity = ActivityTestRule<MainActivity>(MainActivity::class.java)
-    // get reference to the LanguageDatabase and LanguageDao class
+abstract class NotesDatabaseTest : TestCase() {
     private lateinit var db: NotesDatabase
     protected lateinit var dao: NotesDao
 
@@ -28,7 +23,7 @@ abstract class NotesDatabaseTest : TestCase()
         // context from the running application
         val context = ApplicationProvider.getApplicationContext<Context>()
         // initialize the db and dao variable
-        db = Room.inMemoryDatabaseBuilder(context,NotesDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, NotesDatabase::class.java).build()
         dao = db.getNotesDao()
     }
 
@@ -38,10 +33,4 @@ abstract class NotesDatabaseTest : TestCase()
     fun closeDb() {
         db.close()
     }
-
-
-
-
-
-
 }

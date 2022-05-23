@@ -1,5 +1,4 @@
 package com.task.noteapp.ui
-
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,10 +14,8 @@ import com.task.noteapp.NotesViewModel
 import com.task.noteapp.R
 import com.task.noteapp.adapter.NotesAdapter
 import com.task.noteapp.databinding.NoteFragmentBinding
-import com.task.noteapp.model.Notes
 import com.task.noteapp.ui.model.NotesUI
 import com.task.noteapp.utils.NotesState
-import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 class NotesFragment : Fragment(), View.OnClickListener {
@@ -44,7 +41,6 @@ class NotesFragment : Fragment(), View.OnClickListener {
         super.onAttach(context)
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,7 +49,6 @@ class NotesFragment : Fragment(), View.OnClickListener {
         binding = NoteFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,7 +65,6 @@ class NotesFragment : Fragment(), View.OnClickListener {
                 }
                 is NotesState.Error -> {
                     showErrorMessage(it.exception.message!!)
-
                 }
                 NotesState.ShowLoading -> {
                     binding.progress.visibility = View.VISIBLE
@@ -98,7 +92,6 @@ class NotesFragment : Fragment(), View.OnClickListener {
         noteAdapter.differ.submitList(emptyList())
     }
 
-
     private fun setRv() {
         binding.notesRv.apply {
             adapter = noteAdapter
@@ -106,14 +99,13 @@ class NotesFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
     private fun setClickListener() {
         binding.btnAddNotes.setOnClickListener(this)
         noteAdapter.setOnItemClickListener {
 
             findNavController().navigate(
                 NotesFragmentDirections.actionNavHomeToTaskEditFragment(
-                    NotesUI(it.id,title =  it.title, description = it.description, createdAt = it.createdAt)
+                    NotesUI(it.id, title = it.title, description = it.description, createdAt = it.createdAt)
                 )
             )
         }

@@ -1,5 +1,4 @@
 package com.task.noteapp.ui.di
-
 import androidx.lifecycle.ViewModelProvider
 import com.task.noteapp.repo.NotesRepo
 import com.task.noteapp.NotesViewModel

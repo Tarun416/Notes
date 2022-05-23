@@ -1,5 +1,4 @@
 package com.task.noteapp
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,11 +21,10 @@ class NotesViewModel
 
     private val noteLiveData = MutableLiveData<NotesState>()
     private var compositeDisposable = CompositeDisposable()
-    private val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm aa")
+    private val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm aa", Locale.getDefault())
 
     val livedata: LiveData<NotesState>
         get() = noteLiveData
-
 
     fun insert(taskName: String, taskDesc: String) {
         noteLiveData.value = NotesState.ShowLoading
@@ -37,7 +35,6 @@ class NotesViewModel
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer<Any?> { })
     }
-
 
     fun update(id: Int, taskName: String, taskDesc: String, createdAt: String?) {
         noteLiveData.value = NotesState.ShowLoading
@@ -61,14 +58,10 @@ class NotesViewModel
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(Consumer<Any?> { })
-
-
     }
-
 
     fun getAllNotes() {
         noteLiveData.value = NotesState.ShowLoading
-
         repo.getNotes()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -81,13 +74,11 @@ class NotesViewModel
                 override fun onNext(t: List<Notes>?) {
 
                     noteLiveData.value = NotesState.HideLoading
-
                     val noteList = mutableListOf<NotesUI>()
-                    for(note in t!!)
-                    {
-                        noteList.add(NotesUI(note.id,note.title,note.description,note.edited,sdf.format(note.createdAt)))
+                    for (note in t!!) {
+                        val date = if (note.createdAt != null) sdf.format(note.createdAt ?: "") else null
+                        noteList.add(NotesUI(note.id, note.title, note.description, note.edited, date))
                     }
-
                     if (noteList!!.isEmpty())
                         noteLiveData.postValue(NotesState.Empty)
                     else
@@ -100,9 +91,7 @@ class NotesViewModel
                 }
 
                 override fun onComplete() {
-
                 }
-
             })
     }
 
@@ -110,6 +99,4 @@ class NotesViewModel
         super.onCleared()
         compositeDisposable.clear()
     }
-
-
 }

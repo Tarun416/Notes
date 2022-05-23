@@ -8,17 +8,16 @@ import androidx.room.Update
 import com.task.noteapp.model.Notes
 import io.reactivex.rxjava3.core.Observable
 
-
 @Dao
 interface NotesDao {
 
     // insert notes
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-     fun insertNotes(notes: Notes)
+    fun insertNotes(notes: Notes)
 
     // update notes
     @Update(onConflict = OnConflictStrategy.REPLACE)
-     fun updateNotes(notes: Notes)
+    fun updateNotes(notes: Notes)
 
     // get all notes from db
     @Query("SELECT * FROM notes order by id desc")

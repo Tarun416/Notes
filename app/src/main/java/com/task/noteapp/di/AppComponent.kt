@@ -9,9 +9,6 @@ import javax.inject.Singleton
 @Component(modules = [AppModule::class, NoteModule::class])
 @Singleton
 interface AppComponent {
-
-    fun inject (frag : NotesFragment)
-    fun inject (frag : NotesCreateEditFragment)
-
-
+    fun inject(frag: NotesFragment)
+    fun inject(frag: NotesCreateEditFragment)
 }

@@ -1,5 +1,4 @@
 package com.task.noteapp
-
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.task.noteapp.di.AppComponent
@@ -9,7 +8,7 @@ import com.task.noteapp.ui.di.NoteModule
 
 class NotesApp : Application() {
 
-    private lateinit var appComponent : AppComponent
+    private lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -19,6 +18,5 @@ class NotesApp : Application() {
             .build()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
-
-    fun getAppComponent()  = appComponent
+    fun getAppComponent() = appComponent
 }

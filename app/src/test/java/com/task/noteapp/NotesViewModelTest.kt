@@ -11,18 +11,19 @@ import org.junit.runner.RunWith
 import org.junit.Assert.assertThat
 import org.mockito.Mockito.*
 import com.task.noteapp.model.Notes
+import com.task.noteapp.ui.model.NotesUI
 import com.task.noteapp.utils.BaseJUnitTest
 import io.reactivex.rxjava3.core.Observable
 import org.hamcrest.CoreMatchers.*
 import org.mockito.Mockito.verify
-
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
-class NotesViewModelTest : BaseJUnitTest(){
+class NotesViewModelTest : BaseJUnitTest() {
 
     private lateinit var vm: NotesViewModel
     private val repo = mock<NotesRepo>()
-    private var observer=  mock<Observer<NotesState>>()
+    private var observer = mock<Observer<NotesState>>()
 
     override fun start() {
         vm = NotesViewModel(
@@ -37,36 +38,41 @@ class NotesViewModelTest : BaseJUnitTest(){
     @Test
     fun `getNotes should show empty list when data source is empty`() {
         val notes = mutableListOf<Notes>()
-        given(repo.getNotes()).willReturn{Observable.fromCallable { notes }}
-        //then
+        given(repo.getNotes()).willReturn { Observable.fromCallable { notes } }
+        // then
         vm.livedata.observeForever(observer)
-        //that
+        // that
         vm.getAllNotes()
         verify(observer).onChanged(NotesState.ShowLoading)
         verify(observer).onChanged(NotesState.HideLoading)
         verify(observer).onChanged(NotesState.Empty)
         verify(repo).getNotes()
-
     }
 
-
-
     @Test
-    fun `getNotes should show items in list when data source has atleast one entry`(){
+    fun `getNotes should show items in list when data source has atleast one entry`() {
 
-        val single = Observable.just(listOf(
-            Notes(1,"D","1")
-        ))
-        given(repo.getNotes()).willReturn{single}
+        val single = Observable.just(
+            listOf(
+                Notes(1, "D", "1")
+            )
+        )
+        val singleUI = Observable.just(
+            listOf(
+                NotesUI(1, "D", "1")
+            )
+        )
 
-        //then
+        given(repo.getNotes()).willReturn { single }
+
+        // then
         vm.livedata.observeForever(observer)
-        //that
+        // that
         vm.getAllNotes()
 
         verify(observer).onChanged(NotesState.ShowLoading)
         verify(observer).onChanged(NotesState.HideLoading)
-        verify(observer).onChanged(NotesState.Success(single.blockingFirst()))
+        verify(observer).onChanged(NotesState.Success(singleUI.blockingFirst()))
         verify(repo).getNotes()
     }
 
@@ -74,9 +80,9 @@ class NotesViewModelTest : BaseJUnitTest(){
     fun `getNotes should emit error when data source throws an throwable`() {
         val throwable = Throwable("mock")
         given(repo.getNotes()).willReturn(Observable.error(throwable))
-        //then
+        // then
         vm.livedata.observeForever(observer)
-        //that
+        // that
         vm.getAllNotes()
         verify(observer).onChanged(NotesState.ShowLoading)
         verify(observer).onChanged(NotesState.HideLoading)
@@ -84,36 +90,42 @@ class NotesViewModelTest : BaseJUnitTest(){
         verify(repo).getNotes()
     }
 
-
-
-
     @Test
     fun `fetchNotes should return note correctly`() {
-        val note1 = Notes(1,"mercedes", "e")
-        val note2 = Notes(2,"bmw", "e")
+        val note1 = Notes(1, "mercedes", "e")
+        val note2 = Notes(2, "bmw", "e")
 
-        val notelist = listOf(note1,note2)
+        val noteUI1 = NotesUI(1, "mercedes", "e")
+        val noteUI2 = NotesUI(2, "bmw", "e")
 
-        given(repo.getNotes()).willReturn(Observable.just(notelist
-        ))
+        val notelist = listOf(note1, note2)
+        val notelistUI = listOf(noteUI1, noteUI2)
+
+        given(repo.getNotes()).willReturn(
+            Observable.just(
+                notelist
+            )
+        )
 
         vm.livedata.observeForever(observer)
-         vm.getAllNotes()
+        vm.getAllNotes()
         verify(observer).onChanged(NotesState.ShowLoading)
-        verify(observer).onChanged(NotesState.Success(notelist))
+        verify(observer).onChanged(NotesState.Success(notelistUI))
         verify(repo).getNotes()
-
-       // assertEquals(notelist, vm.getAllNotes())
     }
+
     @Test
     fun checkLiveData_whenFetchAllNotes_shouldReturnSame() {
-        val note1 = Notes(1,"mercedes", "e")
-        val note2 = Notes(2,"bmw", "e")
+        val note1 = Notes(1, "mercedes", "e")
+        val note2 = Notes(2, "bmw", "e")
 
-        val notelist = listOf(note1,note2)
+        val notelist = listOf(note1, note2)
 
-        `when`(repo.getNotes()).thenReturn(Observable.just(notelist
-        ))
+        `when`(repo.getNotes()).thenReturn(
+            Observable.just(
+                notelist
+            )
+        )
 
         vm.getAllNotes()
         vm.livedata.value.let {
@@ -124,7 +136,4 @@ class NotesViewModelTest : BaseJUnitTest(){
         }
         verify(repo).getNotes()
     }
-
-
-
 }
