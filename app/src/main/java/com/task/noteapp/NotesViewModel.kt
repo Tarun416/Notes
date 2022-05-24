@@ -43,7 +43,7 @@ class NotesViewModel
             title = taskName,
             description = taskDesc,
             edited = true,
-            createdAt = sdf.parse(createdAt)
+            createdAt = sdf.parse(createdAt!!)
         )
 
         Single.fromCallable { repo.updateNotes(note) }
@@ -68,7 +68,7 @@ class NotesViewModel
             .subscribe(object : io.reactivex.rxjava3.core.Observer<List<Notes>> {
 
                 override fun onSubscribe(d: Disposable?) {
-                    compositeDisposable.add(d)
+                    compositeDisposable.add(d!!)
                 }
 
                 override fun onNext(t: List<Notes>?) {
@@ -79,7 +79,7 @@ class NotesViewModel
                         val date = if (note.createdAt != null) sdf.format(note.createdAt ?: "") else null
                         noteList.add(NotesUI(note.id, note.title, note.description, note.edited, date))
                     }
-                    if (noteList!!.isEmpty())
+                    if (noteList.isEmpty())
                         noteLiveData.postValue(NotesState.Empty)
                     else
                         noteLiveData.postValue(NotesState.Success(noteList))

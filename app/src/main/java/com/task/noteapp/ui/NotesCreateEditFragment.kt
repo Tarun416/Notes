@@ -64,9 +64,7 @@ class NotesCreateEditFragment : Fragment(), View.OnClickListener {
         setClickLisntener()
 
         // receiving bundles here
-        val notes = args.notes ?: null
-        val id = notes?.id ?: 0
-
+        val notes = args.notes
         with(binding) {
             noteLayout.titleET.setText(notes?.title)
             noteLayout.noteET.setText(notes?.description)
