@@ -1,4 +1,5 @@
 package com.task.noteapp
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import com.task.noteapp.repo.NotesRepo
 import com.task.noteapp.ui.model.NotesUI
 import com.task.noteapp.utils.NotesState
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -30,10 +32,28 @@ class NotesViewModel
         noteLiveData.value = NotesState.ShowLoading
         val note = Notes(title = taskName, description = taskDesc, createdAt = Date())
 
-        Single.fromCallable { repo.insertNotes(note) }
+        repo.insertNotes(note)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(Consumer<Any?> { })
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onComplete() {
+
+                }
+
+                override fun onError(e: Throwable) {
+
+                }
+
+            })
+
+        /* Single.fromCallable { repo.insertNotes(note) }
+             .subscribeOn(Schedulers.io())
+             .observeOn(AndroidSchedulers.mainThread())
+             .subscribe(Consumer<Any?> { })*/
     }
 
     fun update(id: Int, taskName: String, taskDesc: String, createdAt: String?) {
@@ -45,19 +65,55 @@ class NotesViewModel
             edited = true,
             createdAt = sdf.parse(createdAt!!)
         )
-
-        Single.fromCallable { repo.updateNotes(note) }
+        repo.updateNotes(note)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(Consumer<Any?> { })
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onComplete() {
+
+                }
+
+                override fun onError(e: Throwable) {
+
+                }
+
+            })
+
+        /*Single.fromCallable { repo.updateNotes(note) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer<Any?> { })*/
     }
 
     fun deleteById(id: Int) {
         noteLiveData.value = NotesState.ShowLoading
-        Single.fromCallable { repo.deleteNotes(id) }
+
+        repo.deleteNotes(id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(Consumer<Any?> { })
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onComplete() {
+
+                }
+
+                override fun onError(e: Throwable) {
+
+                }
+
+            })
+
+        /*Single.fromCallable { repo.deleteNotes(id) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(Consumer<Any?> { })*/
     }
 
     fun getAllNotes() {
@@ -76,8 +132,17 @@ class NotesViewModel
                     noteLiveData.value = NotesState.HideLoading
                     val noteList = mutableListOf<NotesUI>()
                     for (note in t!!) {
-                        val date = if (note.createdAt != null) sdf.format(note.createdAt ?: "") else null
-                        noteList.add(NotesUI(note.id, note.title, note.description, note.edited, date))
+                        val date =
+                            if (note.createdAt != null) sdf.format(note.createdAt ?: "") else null
+                        noteList.add(
+                            NotesUI(
+                                note.id,
+                                note.title,
+                                note.description,
+                                note.edited,
+                                date
+                            )
+                        )
                     }
                     if (noteList.isEmpty())
                         noteLiveData.postValue(NotesState.Empty)

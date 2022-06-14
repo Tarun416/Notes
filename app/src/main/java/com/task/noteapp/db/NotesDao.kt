@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.task.noteapp.model.Notes
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 
 @Dao
@@ -13,11 +14,11 @@ interface NotesDao {
 
     // insert notes
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertNotes(notes: Notes)
+    fun insertNotes(notes: Notes)  : Completable
 
     // update notes
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateNotes(notes: Notes)
+    fun updateNotes(notes: Notes) : Completable
 
     // get all notes from db
     @Query("SELECT * FROM notes order by id desc")
@@ -25,5 +26,5 @@ interface NotesDao {
 
     // delete notes by id
     @Query("DELETE FROM notes where id=:id")
-    fun deleteNote(id: Int)
+    fun deleteNote(id: Int) : Completable
 }
